@@ -2,8 +2,6 @@ import 'package:chatwoot_sdk/data/local/entity/chatwoot_user.dart';
 import 'package:chatwoot_sdk/ui/chatwoot_chat_theme.dart';
 import 'package:chatwoot_sdk/ui/chatwoot_l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:intl/intl.dart';
 
 import 'chatwoot_chat_page.dart';
 
@@ -22,8 +20,6 @@ class ChatwootChatDialog extends StatefulWidget {
     Color? secondaryColor,
     Color? backgroundColor,
     ChatwootL10n? l10n,
-    DateFormat? timeFormat,
-    DateFormat? dateFormat,
     Future<FileAttachment?> Function()? onAttachmentPressed,
     Future<void> Function(String)? openFile
   }) {
@@ -41,8 +37,6 @@ class ChatwootChatDialog extends StatefulWidget {
             secondaryColor: secondaryColor,
             backgroundColor: backgroundColor,
             l10n: l10n,
-            timeFormat: timeFormat,
-            dateFormat: dateFormat,
             onAttachmentPressed: onAttachmentPressed,
             openFile: openFile,
           );
@@ -88,12 +82,6 @@ class ChatwootChatDialog extends StatefulWidget {
   /// See [ChatwootL10n]
   final ChatwootL10n? l10n;
 
-  /// See [Chat.timeFormat]
-  final DateFormat? timeFormat;
-
-  /// See [Chat.dateFormat]
-  final DateFormat? dateFormat;
-
   final Future<FileAttachment?> Function()? onAttachmentPressed;
 
   final Future<void> Function(String)? openFile;
@@ -110,8 +98,6 @@ class ChatwootChatDialog extends StatefulWidget {
     this.secondaryColor,
     this.backgroundColor,
     this.l10n,
-    this.timeFormat,
-    this.dateFormat,
     this.onAttachmentPressed,
     this.openFile
   }) : super(key: key);
@@ -205,8 +191,6 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
                 userIdentityValidationKey: widget.userIdentityValidationKey,
                 user: widget.user,
                 enablePersistence: widget.enablePersistence,
-                timeFormat: widget.timeFormat,
-                dateFormat: widget.dateFormat,
                 theme: ChatwootChatTheme(
                     primaryColor: widget.primaryColor ?? CHATWOOT_COLOR_PRIMARY,
                     secondaryColor: widget.secondaryColor ?? Colors.white,

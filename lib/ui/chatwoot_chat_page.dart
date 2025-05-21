@@ -92,12 +92,6 @@ class ChatwootChat extends StatefulWidget {
   /// See [ChatwootL10n]
   final ChatwootL10n l10n;
 
-  /// See [Chat.timeFormat]
-  final DateFormat? timeFormat;
-
-  /// See [Chat.dateFormat]
-  final DateFormat? dateFormat;
-
   ///See [ChatwootCallbacks.onWelcome]
   final void Function()? onWelcome;
 
@@ -164,8 +158,6 @@ class ChatwootChat extends StatefulWidget {
       this.showUserNames = true,
       this.theme,
       this.l10n = const ChatwootL10n(),
-      this.timeFormat,
-      this.dateFormat,
       this.onWelcome,
       this.onPing,
       this.onConfirmedSubscription,

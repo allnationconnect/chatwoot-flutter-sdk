@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       title: "Customer Support",
       inboxIdentifier: "your-api-inbox-identifier",
+      userIdentityValidationKey: "your-hmac-user-validation-key",
       baseUrl: "https://app.chatwoot.com",
       user: ChatwootUser(
         identifier: "test@test.com",
@@ -68,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ChatwootChat(
         inboxIdentifier: "your-api-inbox-identifier",
+        userIdentityValidationKey: "your-hmac-user-validation-key",
         baseUrl: "https://app.chatwoot.com",
         user: ChatwootUser(
           identifier: "test@test.com",

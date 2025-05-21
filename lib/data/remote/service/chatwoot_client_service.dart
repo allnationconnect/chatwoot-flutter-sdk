@@ -113,13 +113,13 @@ class ChatwootClientServiceImpl extends ChatwootClientService {
   @override
   Future<ChatwootContact> getContact() async {
     try {
-      final createResponse = await _dio.get(
+      final getResponse = await _dio.get(
           "/public/api/v1/inboxes/${ChatwootClientApiInterceptor.INTERCEPTOR_INBOX_IDENTIFIER_PLACEHOLDER}/contacts/${ChatwootClientApiInterceptor.INTERCEPTOR_CONTACT_IDENTIFIER_PLACEHOLDER}");
-      if ((createResponse.statusCode ?? 0).isBetween(199, 300)) {
-        return ChatwootContact.fromJson(createResponse.data);
+      if ((getResponse.statusCode ?? 0).isBetween(199, 300)) {
+        return ChatwootContact.fromJson(getResponse.data);
       } else {
         throw ChatwootClientException(
-            createResponse.statusMessage ?? "unknown error",
+            getResponse.statusMessage ?? "unknown error",
             ChatwootClientExceptionType.GET_CONTACT_FAILED);
       }
     } on DioException catch (e) {

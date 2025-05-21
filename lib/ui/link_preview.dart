@@ -31,10 +31,15 @@ class LinkMetadata {
         final document = parse(utf8.decode(response.bodyBytes));
 
         // Extract metadata from meta tags
-        final title = document
+        String title = document
             .querySelector('meta[property="og:title"]')
             ?.attributes['content'] ??
-            document.querySelector('title')?.text;
+            document.querySelector('title')?.text ?? '';
+
+        if(title.isEmpty){
+          //if no title is set fallback to url
+          title = url;
+        }
 
         final description = document
             .querySelector('meta[property="og:description"]')

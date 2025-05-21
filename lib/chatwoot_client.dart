@@ -9,6 +9,7 @@ import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:chatwoot_sdk/chatwoot_parameters.dart';
 import 'package:chatwoot_sdk/repository_parameters.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import 'data/local/local_storage.dart';
 
@@ -93,7 +94,8 @@ class ChatwootClient {
   /// handling chatwoot events. By default persistence is enabled, to disable persistence set [enablePersistence] as false
   static Future<ChatwootClient> create(
       {required String baseUrl,
-      required String inboxIdentifier,
+        required String inboxIdentifier,
+        String? userIdentityValidationKey,
       ChatwootUser? user,
       bool enablePersistence = true,
       ChatwootCallbacks? callbacks}) async {
@@ -109,10 +111,28 @@ class ChatwootClient {
         isPersistenceEnabled: enablePersistence,
         baseUrl: baseUrl,
         inboxIdentifier: inboxIdentifier,
-        userIdentifier: user?.identifier);
+        userIdentityValidationKey: userIdentityValidationKey);
+
+    ChatwootUser? chatUser = user;
+    if(userIdentityValidationKey != null && user != null ){
+      final userIdentifier = user.identifier ?? user.email ?? Uuid().v4();
+      final identifierHash = chatwootParams.generateHmacHash(userIdentityValidationKey, userIdentifier);
+      chatUser = ChatwootUser(
+        identifier: userIdentifier,
+        identifierHash: identifierHash,
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+        customAttributes: user.customAttributes
+      );
+    }
 
     final client =
-        ChatwootClient._(chatwootParams, callbacks: callbacks, user: user);
+        ChatwootClient._(
+            chatwootParams,
+            callbacks: callbacks,
+            user: chatUser
+        );
 
     client._init();
 

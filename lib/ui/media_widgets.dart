@@ -249,6 +249,11 @@ class _TextChatMessageState extends State<TextChatMessage> {
                 a: widget.isMine ? styleSheet.a?.copyWith(color: Colors.white): styleSheet.a?.copyWith(color: widget.theme.primaryColor),
               )
           ),
+          if(widget.message.metadata?["sentAt"] != null)
+            Text(
+              widget.message.metadata!["sentAt"],
+              style: (widget.isMine ? widget.theme.sentMessageBodyTextStyle: widget.theme.receivedMessageBodyTextStyle.copyWith(color: Colors.grey)).copyWith(fontSize: 12),
+            )
         ],
       ),
     );
@@ -547,6 +552,46 @@ class RecordedCsatChatMessage extends StatelessWidget{
   }
 
 }
+
+class PlaceholderCircle extends StatelessWidget {
+  final String text;
+  final double size;
+  final Color backgroundColor;
+  final Color textColor;
+  final TextStyle? textStyle;
+
+  const PlaceholderCircle({
+    Key? key,
+    required this.text,
+    this.size = 30.0,
+    this.backgroundColor = Colors.white,
+    this.textColor = CHATWOOT_COLOR_PRIMARY,
+    this.textStyle,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: textStyle ??
+            TextStyle(
+              color: textColor,
+              fontSize: size / 2.5, // Scales font size relative to the widget size
+              fontWeight: FontWeight.bold,
+            ),
+      ),
+    );
+  }
+}
+
 
 
 

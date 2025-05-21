@@ -14,6 +14,7 @@ class ChatwootChatDialog extends StatefulWidget {
     BuildContext context, {
     required String baseUrl,
     required String inboxIdentifier,
+    String? userIdentityValidationKey,
     bool enablePersistence = true,
     required String title,
     ChatwootUser? user,
@@ -32,6 +33,7 @@ class ChatwootChatDialog extends StatefulWidget {
           return ChatwootChatDialog(
             baseUrl: baseUrl,
             inboxIdentifier: inboxIdentifier,
+            userIdentityValidationKey: userIdentityValidationKey,
             title: title,
             user: user,
             enablePersistence: enablePersistence,
@@ -54,6 +56,12 @@ class ChatwootChatDialog extends StatefulWidget {
   ///
   /// For more details see https://www.chatwoot.com/docs/product/channels/api/client-apis
   final String inboxIdentifier;
+
+
+  ///Key used to generate user identifier hash
+  ///
+  /// For more details see https://www.chatwoot.com/docs/product/channels/api/client-apis
+  final String? userIdentityValidationKey;
 
   /// Enables persistence of chatwoot client instance's contact, conversation and messages to disk
   /// for convenience.
@@ -94,6 +102,7 @@ class ChatwootChatDialog extends StatefulWidget {
     Key? key,
     required this.baseUrl,
     required this.inboxIdentifier,
+    this.userIdentityValidationKey,
     this.enablePersistence = true,
     required this.title,
     this.user,
@@ -193,6 +202,7 @@ class _ChatwootChatDialogState extends State<ChatwootChatDialog> {
               child: ChatwootChat(
                 baseUrl: widget.baseUrl,
                 inboxIdentifier: widget.inboxIdentifier,
+                userIdentityValidationKey: widget.userIdentityValidationKey,
                 user: widget.user,
                 enablePersistence: widget.enablePersistence,
                 timeFormat: widget.timeFormat,

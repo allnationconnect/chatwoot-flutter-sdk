@@ -384,6 +384,7 @@ void main() {
         () async {
       //GIVEN
       when(mockLocalStorage.dispose()).thenAnswer((_) => (_) {});
+      when(mockChatwootCallbacks.onError).thenAnswer((_) => (_) {});
       when(mockChatwootCallbacks.onConversationIsOffline)
           .thenAnswer((_) => () {});
       when(mockChatwootCallbacks.onConversationIsOnline)

@@ -42,8 +42,15 @@ class ChatwootContact extends Equatable {
     required this.email,
   });
 
-  factory ChatwootContact.fromJson(Map<String, dynamic> json) =>
-      _$ChatwootContactFromJson(json);
+  factory ChatwootContact.fromJson(Map<String, dynamic> json) {
+    return ChatwootContact(
+      id: json['id'] as int,
+      contactIdentifier: json['source_id'] as String?,
+      pubsubToken: json['pubsub_token'] as String?,
+      name: json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+    );
+  }
 
   Map<String, dynamic> toJson() => _$ChatwootContactToJson(this);
 

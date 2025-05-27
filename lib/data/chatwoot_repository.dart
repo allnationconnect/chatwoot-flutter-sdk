@@ -84,7 +84,9 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
   /// Calls [ChatwootCallbacks.onPersistedMessagesRetrieved] if persisted messages are found
   @override
   void getPersistedMessages() {
-    final persistedMessages = localStorage.messagesDao.getMessages();
+    final conversationId = localStorage.conversationDao.getConversation()?.id;
+    final persistedMessages = localStorage.messagesDao.getMessages(
+        conversationId: conversationId);
     if (persistedMessages.isNotEmpty) {
       callbacks.onPersistedMessagesRetrieved?.call(persistedMessages);
     }
@@ -223,8 +225,9 @@ class ChatwootRepositoryImpl extends ChatwootRepository {
               (localStorage.conversationDao.getConversation()?.id ?? 0)) {
         //delete conversation result
         final conversationUuid = localStorage.conversationDao.getConversation()?.uuid ??'';
+        final conversationId = localStorage.conversationDao.getConversation()?.id;
         localStorage.conversationDao.deleteConversation();
-        localStorage.messagesDao.clear();
+        localStorage.messagesDao.clear(conversationId: conversationId);
         callbacks.onConversationResolved?.call(conversationUuid);
       } else if (chatwootEvent.message?.event ==
           ChatwootEventMessageType.presence_update) {

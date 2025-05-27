@@ -8,6 +8,7 @@ import 'package:chatwoot_sdk/data/remote/requests/send_csat_survey_request.dart'
 import 'package:chatwoot_sdk/di/modules.dart';
 import 'package:chatwoot_sdk/chatwoot_parameters.dart';
 import 'package:chatwoot_sdk/repository_parameters.dart';
+import 'package:chatwoot_sdk/data/remote/service/chatwoot_client_auth_service.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -27,6 +28,62 @@ class ChatwootClient {
   String get baseUrl => _parameters.baseUrl;
 
   String get inboxIdentifier => _parameters.inboxIdentifier;
+
+  /// 获取 ChatwootClientAuthService 实例
+  ChatwootClientAuthService get authService {
+    final container = providerContainerMap[_parameters.clientInstanceKey];
+    if (container == null) {
+      throw ChatwootClientException(
+        "Chatwoot client not initialized",
+        ChatwootClientExceptionType.CREATE_CLIENT_FAILED
+      );
+    }
+    return container.read(chatwootClientAuthServiceProvider(_parameters));
+  }
+
+  ChatwootRepository get repository {
+    final container = providerContainerMap[_parameters.clientInstanceKey];
+    if (container == null) {
+      throw ChatwootClientException(
+        "Chatwoot client not initialized",
+        ChatwootClientExceptionType.CREATE_CLIENT_FAILED 
+      );
+    }
+    return container.read(chatwootRepositoryProvider(
+        RepositoryParameters(
+            params: _parameters, callbacks: callbacks ?? ChatwootCallbacks())));
+  }
+
+  /// 获取 LocalStorage 实例
+  LocalStorage get localStorage {
+    final container = providerContainerMap[_parameters.clientInstanceKey];
+    if (container == null) {
+      throw ChatwootClientException(
+        "Chatwoot client not initialized",
+        ChatwootClientExceptionType.CREATE_CLIENT_FAILED
+      );
+    }
+    return container.read(localStorageProvider(_parameters));
+  }
+
+  /// 获取当前联系人
+  ChatwootContact? get currentContact => localStorage.contactDao.getContact();
+
+  /// 获取当前会话
+  ChatwootConversation? get currentConversation => localStorage.conversationDao.getConversation();
+
+  /// 获取当前用户
+  ChatwootUser? get currentUser => localStorage.userDao.getUser();
+
+  /// 设置当前联系人
+  Future<void> setCurrentContact(ChatwootContact contact) async {
+    await localStorage.contactDao.saveContact(contact);
+  }
+
+  /// 设置当前会话
+  Future<void> setCurrentConversation(ChatwootConversation conversation) async {
+    await localStorage.conversationDao.saveConversation(conversation);
+  }
 
   ChatwootClient._(this._parameters, {this.user, this.callbacks}) {
     providerContainerMap.putIfAbsent(

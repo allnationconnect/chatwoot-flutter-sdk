@@ -299,3 +299,174 @@ Horray! You're done.
 | onLoadStarted    | -       | void Function()                 | Widget load start event                                                                                |
 | onLoadProgress   | -       | void Function(int)              | Widget Load progress event                                                                             |
 | onLoadCompleted  | -       | void Function()                 | Widget Load completed event                                                                            |
+
+## 4. 高级功能使用指南
+
+### a. 变更Contact
+
+Chatwoot SDK 支持变更联系人，您可以通过如下方式使用：
+
+```dart
+// 1. 创建新的联系人
+final contact = await client.authService.createNewContact(
+  inboxIdentifier,
+  ChatwootUser(
+    identifier: "user@example.com",
+    name: "User Name",
+    email: "user@example.com"
+  )
+);
+
+// 2. 设置当前联系人
+await client.setCurrentContact(contact);
+
+// 3. 获取当前联系人信息
+final currentContact = client.currentContact;
+
+// 4. 更新联系人信息
+final updatedContact = await client.authService.getContact();
+await client.setCurrentContact(updatedContact);
+
+// 5. 清除当前联系人
+await client.clearClientData();
+```
+
+注意事项：
+1. 变更联系人会清除当前会话和消息
+2. 建议在变更联系人前保存重要数据
+3. 确保新联系人信息完整且有效
+4. 变更后需要重新创建会话
+
+### b. 多会话管理
+
+Chatwoot SDK 支持多会话管理，您可以通过以下方式使用：
+
+```dart
+// 1. 创建新的会话
+final conversation = await client.authService.createNewConversation(
+  inboxIdentifier,
+  contact.contactIdentifier!
+);
+
+// 2. 设置当前会话
+await client.setCurrentConversation(conversation);
+
+// 3. 获取当前会话的消息
+final messages = await client.getMessages(conversationId: conversation.id);
+
+// 4. 发送消息到当前会话
+await client.sendMessage(
+  content: "Hello",
+  echoId: "unique_id",
+);
+
+// 5. 切换会话
+await client.setCurrentConversation(anotherConversation);
+```
+
+### b. 使用 Repository
+
+Repository 提供了更底层的操作接口，您可以通过以下方式使用：
+
+```dart
+// 1. 获取 repository 实例
+final repository = client.repository;
+
+// 2. 获取本地存储的消息
+repository.getPersistedMessages();
+
+// 3. 从服务器获取最新消息
+await repository.getMessages();
+
+// 4. 发送消息
+await repository.sendMessage(
+  ChatwootNewMessageRequest(
+    content: "Hello",
+    echoId: "unique_id",
+  )
+);
+
+// 5. 发送用户动作
+repository.sendAction(ChatwootActionType.typing_on);
+
+// 6. 发送 CSAT 调查反馈
+await repository.sendCsatFeedBack(
+  conversationUuid,
+  SendCsatSurveyRequest(
+    rating: 5,
+    feedbackMessage: "Great service!"
+  )
+);
+```
+
+### c. 使用 AuthService
+
+AuthService 提供了认证和会话管理相关的功能：
+
+```dart
+// 1. 获取 authService 实例
+final authService = client.authService;
+
+// 2. 创建新的联系人
+final contact = await authService.createNewContact(
+  inboxIdentifier,
+  ChatwootUser(
+    identifier: "user@example.com",
+    name: "User Name",
+    email: "user@example.com"
+  )
+);
+
+// 3. 创建新的会话
+final conversation = await authService.createNewConversation(
+  inboxIdentifier,
+  contact.contactIdentifier!
+);
+
+// 4. 获取联系人信息
+final contactInfo = await authService.getContact();
+
+// 5. 获取会话列表
+final conversations = await authService.getConversations();
+```
+
+### d. 数据持久化
+
+SDK 支持数据持久化，您可以通过以下方式管理数据：
+
+```dart
+// 1. 清除当前客户端实例的数据
+client.clearClientData();
+
+// 2. 清除特定客户端实例的数据
+await ChatwootClient.clearData(
+  baseUrl: "https://app.chatwoot.com",
+  inboxIdentifier: "your-inbox-id",
+  userIdentifier: "user@example.com"
+);
+
+// 3. 清除所有持久化数据
+await ChatwootClient.clearAllData();
+```
+
+### e. 最佳实践
+
+1. 会话管理：
+   - 在切换会话时，记得调用 `setCurrentConversation`
+   - 使用 `currentConversation` 检查当前会话状态
+   - 在发送消息前确保有活动的会话
+
+2. 数据持久化：
+   - 使用 `enablePersistence` 参数控制是否启用持久化
+   - 定期清理不需要的数据
+   - 在应用退出时调用 `dispose` 方法
+
+3. 错误处理：
+   - 实现 `ChatwootCallbacks` 中的 `onError` 回调
+   - 检查 `currentContact` 和 `currentConversation` 的状态
+   - 处理网络错误和会话超时
+
+4. 性能优化：
+   - 使用 `getPersistedMessages` 快速加载本地消息
+   - 使用 `getMessages` 获取最新消息
+   - 适当使用 `clearClientData` 清理数据
